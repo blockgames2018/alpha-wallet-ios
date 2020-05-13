@@ -30,6 +30,7 @@ class SingleChainTokenCoordinator: Coordinator {
     private let cryptoPrice: Subscribable<Double>
     private let assetDefinitionStore: AssetDefinitionStore
     private let eventsDataStore: EventsDataStoreProtocol
+    private let analyticsCoordinator: AnalyticsCoordinator?
     private let navigationController: UINavigationController
     private let autoDetectTransactedTokensQueue: OperationQueue
     private let autoDetectTokensQueue: OperationQueue
@@ -47,6 +48,7 @@ class SingleChainTokenCoordinator: Coordinator {
             ethPrice: Subscribable<Double>,
             assetDefinitionStore: AssetDefinitionStore,
             eventsDataStore: EventsDataStoreProtocol,
+            analyticsCoordinator: AnalyticsCoordinator?,
             navigationController: UINavigationController,
             withAutoDetectTransactedTokensQueue autoDetectTransactedTokensQueue: OperationQueue,
             withAutoDetectTokensQueue autoDetectTokensQueue: OperationQueue
@@ -57,6 +59,7 @@ class SingleChainTokenCoordinator: Coordinator {
         self.cryptoPrice = ethPrice
         self.assetDefinitionStore = assetDefinitionStore
         self.eventsDataStore = eventsDataStore
+        self.analyticsCoordinator = analyticsCoordinator
         self.navigationController = navigationController
         self.autoDetectTransactedTokensQueue = autoDetectTransactedTokensQueue
         self.autoDetectTokensQueue = autoDetectTokensQueue
@@ -322,7 +325,8 @@ class SingleChainTokenCoordinator: Coordinator {
                 ethPrice: cryptoPrice,
                 token: token,
                 assetDefinitionStore: assetDefinitionStore,
-                eventsDataStore: eventsDataStore
+                eventsDataStore: eventsDataStore,
+                analyticsCoordinator: analyticsCoordinator
         )
         addCoordinator(tokensCardCoordinator)
         tokensCardCoordinator.delegate = self

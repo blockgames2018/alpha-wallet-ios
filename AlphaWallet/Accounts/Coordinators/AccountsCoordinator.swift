@@ -17,12 +17,13 @@ class AccountsCoordinator: Coordinator {
     private let balanceCoordinator = GetNativeCryptoCurrencyBalanceCoordinator(forServer: .main)
     private let keystore: Keystore
     private let promptBackupCoordinator: PromptBackupCoordinator
+    private let analyticsCoordinator: AnalyticsCoordinator?
 
     let navigationController: UINavigationController
     var coordinators: [Coordinator] = []
 
     lazy var accountsViewController: AccountsViewController = {
-        let controller = AccountsViewController(keystore: keystore, balanceCoordinator: balanceCoordinator)
+        let controller = AccountsViewController(keystore: keystore, balanceCoordinator: balanceCoordinator, analyticsCoordinator: analyticsCoordinator)
         controller.navigationItem.leftBarButtonItem = UIBarButtonItem(title: R.string.localizable.done(), style: .done, target: self, action: #selector(dismiss))
         controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addWallet))
         controller.allowsAccountDeletion = true
@@ -36,13 +37,15 @@ class AccountsCoordinator: Coordinator {
         config: Config,
         navigationController: UINavigationController,
         keystore: Keystore,
-        promptBackupCoordinator: PromptBackupCoordinator
+        promptBackupCoordinator: PromptBackupCoordinator,
+        analyticsCoordinator: AnalyticsCoordinator?
     ) {
         self.config = config
         self.navigationController = navigationController
         self.navigationController.modalPresentationStyle = .formSheet
         self.keystore = keystore
         self.promptBackupCoordinator = promptBackupCoordinator
+        self.analyticsCoordinator = analyticsCoordinator
     }
 
     func start() {
@@ -84,7 +87,7 @@ class AccountsCoordinator: Coordinator {
 	}
 
     private func importOrCreateWallet(entryPoint: WalletEntryPoint) {
-        let coordinator = WalletCoordinator(config: config, keystore: keystore)
+        let coordinator = WalletCoordinator(config: config, keystore: keystore, analyticsCoordinator: analyticsCoordinator)
         if case .createInstantWallet = entryPoint {
             coordinator.navigationController = navigationController
         }
@@ -124,11 +127,7 @@ class AccountsCoordinator: Coordinator {
             }
             let backupKeystoreAction = UIAlertAction(title: actionTitle, style: .default) { [weak self] _ in
                 guard let strongSelf = self else { return }
-                let coordinator = BackupCoordinator(
-                        navigationController: strongSelf.navigationController,
-                        keystore: strongSelf.keystore,
-                        account: account
-                )
+                let coordinator = BackupCoordinator(navigationController: strongSelf.navigationController, keystore: strongSelf.keystore, account: account, analyticsCoordinator: strongSelf.analyticsCoordinator)
                 coordinator.delegate = strongSelf
                 coordinator.start()
                 strongSelf.addCoordinator(coordinator)

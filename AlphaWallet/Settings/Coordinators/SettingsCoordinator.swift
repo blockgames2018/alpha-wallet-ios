@@ -30,7 +30,7 @@ class SettingsCoordinator: Coordinator {
 	var coordinators: [Coordinator] = []
 
 	lazy var rootViewController: SettingsViewController = {
-		let controller = SettingsViewController(keystore: keystore, account: account)
+		let controller = SettingsViewController(keystore: keystore, account: account, analyticsCoordinator: analyticsCoordinator)
 		controller.delegate = self
 		controller.modalPresentationStyle = .pageSheet
 		return controller
@@ -68,7 +68,8 @@ class SettingsCoordinator: Coordinator {
 			let coordinator = BackupCoordinator(
 					navigationController: navigationController,
 					keystore: keystore,
-					account: account
+					account: account,
+					analyticsCoordinator: analyticsCoordinator
 			)
 			coordinator.delegate = self
 			coordinator.start()
@@ -83,7 +84,8 @@ class SettingsCoordinator: Coordinator {
 				config: config,
 				navigationController: NavigationController(),
 				keystore: keystore,
-				promptBackupCoordinator: promptBackupCoordinator
+				promptBackupCoordinator: promptBackupCoordinator,
+				analyticsCoordinator: analyticsCoordinator
 		)
 		coordinator.delegate = self
 		coordinator.start()

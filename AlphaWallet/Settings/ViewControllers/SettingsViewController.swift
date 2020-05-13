@@ -23,6 +23,7 @@ class SettingsViewController: FormViewController {
     }()
     private let keystore: Keystore
     private let account: Wallet
+    private let analyticsCoordinator: AnalyticsCoordinator?
     private let promptBackupWalletViewHolder = UIView()
 
     weak var delegate: SettingsViewControllerDelegate?
@@ -47,9 +48,10 @@ class SettingsViewController: FormViewController {
         }
     }
 
-    init(keystore: Keystore, account: Wallet) {
+    init(keystore: Keystore, account: Wallet, analyticsCoordinator: AnalyticsCoordinator?) {
         self.keystore = keystore
         self.account = account
+        self.analyticsCoordinator = analyticsCoordinator
         super.init(style: .plain)
         title = R.string.localizable.aSettingsNavigationTitle()
     }
@@ -102,7 +104,7 @@ class SettingsViewController: FormViewController {
             }.cellUpdate { [weak self] cell, _ in
                 guard let strongSelf = self else { return }
                 cell.imageView?.image = R.image.settings_wallet_backup()?.imageWithInsets(insets: strongSelf.iconInset)?.withRenderingMode(.alwaysTemplate)
-                let walletSecurityLevel = PromptBackupCoordinator(keystore: strongSelf.keystore, wallet: strongSelf.account, config: .init()).securityLevel
+                let walletSecurityLevel = PromptBackupCoordinator(keystore: strongSelf.keystore, wallet: strongSelf.account, config: .init(), analyticsCoordinator: strongSelf.analyticsCoordinator).securityLevel
                 cell.accessoryView = walletSecurityLevel.flatMap { WalletSecurityLevelIndicator(level: $0) }
                 cell.textLabel?.textAlignment = .left
             }

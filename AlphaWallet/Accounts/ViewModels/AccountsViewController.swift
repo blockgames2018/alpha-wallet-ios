@@ -20,7 +20,8 @@ class AccountsViewController: UIViewController {
     private var balances: [AlphaWallet.Address: Balance?] = [:]
     private let keystore: Keystore
     private let balanceCoordinator: GetNativeCryptoCurrencyBalanceCoordinator
-    private var etherKeystore = try? EtherKeystore()
+    private let analyticsCoordinator: AnalyticsCoordinator?
+    lazy private var etherKeystore = try? EtherKeystore(analyticsCoordinator: analyticsCoordinator)
 
     weak var delegate: AccountsViewControllerDelegate?
     var allowsAccountDeletion: Bool = false
@@ -28,9 +29,10 @@ class AccountsViewController: UIViewController {
         return !keystore.wallets.isEmpty
     }
 
-    init(keystore: Keystore, balanceCoordinator: GetNativeCryptoCurrencyBalanceCoordinator) {
+    init(keystore: Keystore, balanceCoordinator: GetNativeCryptoCurrencyBalanceCoordinator, analyticsCoordinator: AnalyticsCoordinator?) {
         self.keystore = keystore
         self.balanceCoordinator = balanceCoordinator
+        self.analyticsCoordinator = analyticsCoordinator
         super.init(nibName: nil, bundle: nil)
 
         view.backgroundColor = Colors.appBackground
